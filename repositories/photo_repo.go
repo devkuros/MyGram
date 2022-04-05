@@ -4,6 +4,7 @@ import (
 	"mygram/handlers"
 	"mygram/models"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
@@ -18,7 +19,7 @@ type photoRepo struct {
 	DB *gorm.DB
 }
 
-func NewphotoRepo(db *gorm.DB) *photoRepo {
+func NewPhotoRepo(db *gorm.DB) *photoRepo {
 	return &photoRepo{
 		DB: db,
 	}
@@ -103,5 +104,40 @@ func (pht *photoRepo) GetPhotos(c *gin.Context) {
 		"created_at": Photo.CreatedAt,
 		"updated_at": Photo.UpdatedAt,
 		"user":       UserBody,
+	})
+}
+
+func (pht *photoRepo) UpdatePhotos(c *gin.Context) {
+	userData := c.MustGet("userData").(jwt.MapClaims)
+	contentType := handlers.GetContentType(c)
+	Photo := models.Photo{}
+
+	photoId, _ := strconv.Atoi(c.Param("photoId"))
+	userID := uint(userData["id"].(float64))
+
+	if contentType == photoApp {
+		c.ShouldBindJSON(&Photo)
+	} else {
+		c.ShouldBind(&Photo)
+	}
+
+	Photo.UserID = userID
+	Photo.ID = uint(photoId)
+
+	if err := pht.DB.Model(&Photo).Where("id = ?", photoId).Updates(models.Photo{Tittle: Photo.Tittle, Caption: Photo.Caption, PhotoUrl: Photo.PhotoUrl}).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err":     "Bad Request",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"id":        Photo.ID,
+		"tittle":    Photo.Tittle,
+		"caption":   Photo.Caption,
+		"photo_url": Photo.PhotoUrl,
+		"user_id":   Photo.UserID,
+		"update_at": Photo.UpdatedAt,
 	})
 }
