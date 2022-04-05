@@ -117,8 +117,11 @@ func (usr *userRepo) UpdateUsers(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"email":    User.Email,
-		"username": User.Username,
+		"id":        User.ID,
+		"email":     User.Email,
+		"username":  User.Username,
+		"age":       User.Age,
+		"update_at": User.UpdatedAt,
 	})
 
 }
