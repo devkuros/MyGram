@@ -25,6 +25,7 @@ func StartServer() *gin.Engine {
 	{
 		userMiddlewares.Use(middlewares.Authentication())
 		userMiddlewares.PUT("/update/:userId", userAuth.UserAuthorizations(), ctrlUser.UpdateUsers)
+		userMiddlewares.DELETE("/deleted/:userId", userAuth.UserAuthorizations(), ctrlUser.DeleteUsers)
 	}
 
 	return r
