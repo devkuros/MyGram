@@ -14,6 +14,7 @@ func StartServer() *gin.Engine {
 
 	ctrlUser := repositories.NewUserRepo(db)
 	ctrlPhoto := repositories.NewPhotoRepo(db)
+	ctrlComment := repositories.NewCommentRepo(db)
 	authorizations := middlewares.NewAuthorization(db)
 
 	userRouter := r.Group("users")
@@ -36,6 +37,12 @@ func StartServer() *gin.Engine {
 		photoMiddlewares.POST("/upload", ctrlPhoto.UploadPhoto)
 		photoMiddlewares.PUT("/:photoId", authorizations.PhotoAuthorizations(), ctrlPhoto.UpdatePhotos)
 		photoMiddlewares.DELETE("/:photoId", authorizations.PhotoAuthorizations(), ctrlPhoto.DeletePhotos)
+	}
+
+	commentMiddlewares := r.Group("comments")
+	{
+		commentMiddlewares.Use(middlewares.Authentication())
+		commentMiddlewares.POST("/", ctrlComment.CreateComment)
 	}
 
 	return r
