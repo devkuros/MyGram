@@ -106,9 +106,9 @@ func (usr *userRepo) UpdateUsers(c *gin.Context) {
 		c.ShouldBind(&User)
 	}
 
-	User.ID, _ = userID, uint(getId)
+	_, User.ID = userID, uint(getId)
 
-	if err := usr.DB.Model(&User).Where("id = ?", userID).Updates(models.User{Email: User.Email, Username: User.Username}).Error; err != nil {
+	if err := usr.DB.Model(&User).Where("id = ?", getId).Updates(models.User{Email: User.Email, Username: User.Username}).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"err":     "Bad Request",
 			"message": err.Error(),

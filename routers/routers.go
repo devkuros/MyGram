@@ -24,7 +24,7 @@ func StartServer() *gin.Engine {
 	userMiddlewares := r.Group("users")
 	{
 		userMiddlewares.Use(middlewares.Authentication())
-		userMiddlewares.PUT("/update", userAuth.UserAuthorizations(), ctrlUser.UpdateUsers)
+		userMiddlewares.PUT("/update/:userId", userAuth.UserAuthorizations(), ctrlUser.UpdateUsers)
 	}
 
 	return r
