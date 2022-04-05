@@ -141,3 +141,34 @@ func (pht *photoRepo) UpdatePhotos(c *gin.Context) {
 		"update_at": Photo.UpdatedAt,
 	})
 }
+
+func (pht *photoRepo) DeletePhotos(c *gin.Context) {
+	userData := c.MustGet("userData").(jwt.MapClaims)
+	contentType := handlers.GetContentType(c)
+	Photo := models.Photo{}
+
+	photoId, _ := strconv.Atoi(c.Param("photoId"))
+	userID := uint(userData["id"].(float64))
+
+	if contentType == photoApp {
+		c.ShouldBindJSON(&Photo)
+	} else {
+		c.ShouldBind(&Photo)
+	}
+
+	Photo.UserID = userID
+	Photo.ID = uint(photoId)
+
+	if err := pht.DB.Model(&Photo).Where("id = ?", photoId).Delete(&Photo).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err":     "Bad Request",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "your photo has been successfully deleted",
+	})
+
+}

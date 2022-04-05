@@ -25,8 +25,8 @@ func StartServer() *gin.Engine {
 	userMiddlewares := r.Group("users")
 	{
 		userMiddlewares.Use(middlewares.Authentication())
-		userMiddlewares.PUT("/update/:userId", authorizations.UserAuthorizations(), ctrlUser.UpdateUsers)
-		userMiddlewares.DELETE("/deleted/:userId", authorizations.UserAuthorizations(), ctrlUser.DeleteUsers)
+		userMiddlewares.PUT("/:userId", authorizations.UserAuthorizations(), ctrlUser.UpdateUsers)
+		userMiddlewares.DELETE("/:userId", authorizations.UserAuthorizations(), ctrlUser.DeleteUsers)
 	}
 
 	photoMiddlewares := r.Group("photos")
@@ -35,6 +35,7 @@ func StartServer() *gin.Engine {
 		photoMiddlewares.GET("/", ctrlPhoto.GetPhotos)
 		photoMiddlewares.POST("/upload", ctrlPhoto.UploadPhoto)
 		photoMiddlewares.PUT("/:photoId", authorizations.PhotoAuthorizations(), ctrlPhoto.UpdatePhotos)
+		photoMiddlewares.DELETE("/:photoId", authorizations.PhotoAuthorizations(), ctrlPhoto.DeletePhotos)
 	}
 
 	return r
