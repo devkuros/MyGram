@@ -125,3 +125,33 @@ func (usr *userRepo) UpdateUsers(c *gin.Context) {
 	})
 
 }
+
+func (usr *userRepo) DeleteUsers(c *gin.Context) {
+	userData := c.MustGet("userData").(jwt.MapClaims)
+	contentType := handlers.GetContentType(c)
+
+	User := models.User{}
+
+	getId, _ := strconv.Atoi(c.Param("userId"))
+	userID := uint(userData["id"].(float64))
+
+	if contentType == userApp {
+		c.ShouldBindJSON(&User)
+	} else {
+		c.ShouldBind(&User)
+	}
+
+	_, User.ID = userID, uint(getId)
+
+	if err := usr.DB.Model(&User).Where("id = ?", getId).Delete(&User).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err":     "Bad Request",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "your account has been successfully deleted",
+	})
+}
