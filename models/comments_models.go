@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"github.com/asaskevich/govalidator"
 	"gorm.io/gorm"
 )
@@ -18,6 +20,15 @@ type CommentBody struct {
 	ID       uint   `json:"id"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
+}
+
+type CommentPhotoBody struct {
+	ID        uint      `json:"id"`
+	Tittle    string    `json:"tittle"`
+	Caption   string    `json:"caption"`
+	PhotoUrl  string    `json:"photo_url"`
+	UserID    uint      `json:"user_id"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (cmn *Comment) BeforeCreate(tx *gorm.DB) (err error) {

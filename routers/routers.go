@@ -44,6 +44,8 @@ func StartServer() *gin.Engine {
 		commentMiddlewares.Use(middlewares.Authentication())
 		commentMiddlewares.GET("/", ctrlComment.GetComments)
 		commentMiddlewares.POST("/", ctrlComment.CreateComment)
+		commentMiddlewares.PUT("/:commentId", authorizations.CommentAuthorizations(), ctrlComment.UpdateComments)
+		commentMiddlewares.DELETE("/:commentId", authorizations.CommentAuthorizations(), ctrlComment.DeleteComments)
 	}
 
 	return r
