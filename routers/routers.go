@@ -15,6 +15,7 @@ func StartServer() *gin.Engine {
 	ctrlUser := repositories.NewUserRepo(db)
 	ctrlPhoto := repositories.NewPhotoRepo(db)
 	ctrlComment := repositories.NewCommentRepo(db)
+	ctrlSocials := repositories.NewSocialMediaRepo(db)
 	authorizations := middlewares.NewAuthorization(db)
 
 	userRouter := r.Group("users")
@@ -46,6 +47,13 @@ func StartServer() *gin.Engine {
 		commentMiddlewares.POST("/", ctrlComment.CreateComment)
 		commentMiddlewares.PUT("/:commentId", authorizations.CommentAuthorizations(), ctrlComment.UpdateComments)
 		commentMiddlewares.DELETE("/:commentId", authorizations.CommentAuthorizations(), ctrlComment.DeleteComments)
+	}
+
+	socialMediaMiddleware := r.Group("socialmedias")
+	{
+		socialMediaMiddleware.Use(middlewares.Authentication())
+		socialMediaMiddleware.POST("/", ctrlSocials.CreateSocialMedias)
+		socialMediaMiddleware.GET("/", ctrlSocials.GetSocialMedias)
 	}
 
 	return r
