@@ -7,9 +7,9 @@ import (
 
 type Comment struct {
 	gorm.Model
-	UserID  uint
-	User    *User `json:"user" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	PhotoID uint
+	UserID  uint   `json:"user_id"`
+	User    *User  `json:"user" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	PhotoID uint   `json:"photo_id"`
 	Photo   *Photo `json:"photo" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Message string `json:"message" gorm:"not null" valid:"required~Leave a comment messages"`
 }

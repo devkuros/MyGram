@@ -10,7 +10,7 @@ type Photo struct {
 	Tittle   string `json:"tittle" gorm:"not null" form:"tittle" valid:"required~Input Tittle"`
 	Caption  string `json:"caption" form:"caption"`
 	PhotoUrl string `json:"photo_url" gorm:"not null" valid:"required~Input Photo URL"`
-	UserID   uint
+	UserID   uint   `json:"user_id"`
 	User     *User
 }
 

@@ -9,8 +9,8 @@ type SocialMedia struct {
 	gorm.Model
 	Nama           string `json:"nama" gorm:"not null" valid:"required~Input Name"`
 	SocialMediaUrl string `json:"social_media_url" gorm:"not null" valid:"required~Input Social Media URL"`
-	UserID         uint
-	User           *User `json:"user" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	UserID         uint   `json:"user_id"`
+	User           *User  `json:"user" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 func (sm *SocialMedia) BeforeCreate(tx *gorm.DB) (err error) {
