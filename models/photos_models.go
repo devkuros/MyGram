@@ -14,6 +14,14 @@ type Photo struct {
 	User     *User
 }
 
+type PhotoBody struct {
+	ID       uint   `json:"id"`
+	Tittle   string `json:"tittle"`
+	Caption  string `json:"caption"`
+	PhotoUrl string `json:"photo_url"`
+	UserID   uint   `json:"user_id"`
+}
+
 func (ph *Photo) BeforeCreate(tx *gorm.DB) (err error) {
 	if _, errCreate := govalidator.ValidateStruct(ph); errCreate != nil {
 		err = errCreate

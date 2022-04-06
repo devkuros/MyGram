@@ -14,6 +14,12 @@ type Comment struct {
 	Message string `json:"message" gorm:"not null" valid:"required~Leave a comment messages"`
 }
 
+type CommentBody struct {
+	ID       uint   `json:"id"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+}
+
 func (cmn *Comment) BeforeCreate(tx *gorm.DB) (err error) {
 	if _, errCreate := govalidator.ValidateStruct(cmn); errCreate != nil {
 		err = errCreate

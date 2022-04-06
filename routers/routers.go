@@ -34,7 +34,7 @@ func StartServer() *gin.Engine {
 	{
 		photoMiddlewares.Use(middlewares.Authentication())
 		photoMiddlewares.GET("/", ctrlPhoto.GetPhotos)
-		photoMiddlewares.POST("/upload", ctrlPhoto.UploadPhoto)
+		photoMiddlewares.POST("/", ctrlPhoto.UploadPhoto)
 		photoMiddlewares.PUT("/:photoId", authorizations.PhotoAuthorizations(), ctrlPhoto.UpdatePhotos)
 		photoMiddlewares.DELETE("/:photoId", authorizations.PhotoAuthorizations(), ctrlPhoto.DeletePhotos)
 	}
@@ -42,6 +42,7 @@ func StartServer() *gin.Engine {
 	commentMiddlewares := r.Group("comments")
 	{
 		commentMiddlewares.Use(middlewares.Authentication())
+		commentMiddlewares.GET("/", ctrlComment.GetComments)
 		commentMiddlewares.POST("/", ctrlComment.CreateComment)
 	}
 
