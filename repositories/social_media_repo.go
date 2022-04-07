@@ -30,6 +30,7 @@ func (som *socialMediaRepo) GetSocialMedias(c *gin.Context) {
 
 	Social := models.SocialMedia{}
 	User := models.User{}
+	Photo := models.Photo{}
 	SocialBody := models.UserSocialMediaBody{}
 
 	userID := uint(userData["id"].(float64))
@@ -40,7 +41,8 @@ func (som *socialMediaRepo) GetSocialMedias(c *gin.Context) {
 	}
 
 	Social.UserID = userID
-	if err := som.DB.Debug().Find(&Social).Error; err != nil {
+
+	if err := som.DB.Where("user_id = ?", userID).First(&Social).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Bad Request",
 			"message": err.Error(),
@@ -48,9 +50,17 @@ func (som *socialMediaRepo) GetSocialMedias(c *gin.Context) {
 		return
 	}
 
-	if err := som.DB.Debug().Where("id = ?", Social.UserID).First(&User).Error; err != nil {
+	if err := som.DB.Where("id = ?", Social.UserID).First(&User).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Bad Request",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if err := som.DB.Select("photo_url").Where("user_id = ?", userID).First(&Photo).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error":   "Data not found",
 			"message": err.Error(),
 		})
 		return
@@ -65,7 +75,7 @@ func (som *socialMediaRepo) GetSocialMedias(c *gin.Context) {
 
 	SocialBody.StatsSocialMedia.StatsUsers.ID = User.ID
 	SocialBody.StatsSocialMedia.StatsUsers.Username = User.Username
-	SocialBody.StatsSocialMedia.StatsUsers.Email = User.Email
+	SocialBody.StatsSocialMedia.StatsUsers.ProfileImgUrl = Photo.PhotoUrl
 
 	c.JSON(http.StatusOK, SocialBody)
 }

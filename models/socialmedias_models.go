@@ -24,9 +24,9 @@ type UserSocialMediaBody struct {
 		CreatedAt      time.Time `json:"created_at"`
 		UpdatedAt      time.Time `json:"updated_at"`
 		StatsUsers     struct {
-			ID       uint   `json:"id"`
-			Username string `json:"username"`
-			Email    string `json:"email"`
+			ID            uint   `json:"id"`
+			Username      string `json:"username"`
+			ProfileImgUrl string `json:"profile_image_url"`
 		} `json:"user"`
 	} `json:"social_medias"`
 }
