@@ -15,6 +15,14 @@ type SocialMedia struct {
 	User           *User  `json:"user" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
+type GetSocialMediaBody struct {
+	ID             uint      `json:"id"`
+	Nama           string    `json:"name"`
+	SocialMediaUrl string    `json:"social_media_url"`
+	UserID         uint      `json:"user_id"`
+	UpdatedAt      time.Time `json:"updated_at"`
+}
+
 type UserSocialMediaBody struct {
 	StatsSocialMedia struct {
 		ID             uint      `json:"id"`

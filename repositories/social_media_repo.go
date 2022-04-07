@@ -4,6 +4,7 @@ import (
 	"mygram/handlers"
 	"mygram/models"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
@@ -58,7 +59,7 @@ func (som *socialMediaRepo) GetSocialMedias(c *gin.Context) {
 		return
 	}
 
-	if err := som.DB.Select("photo_url").Where("user_id = ?", userID).First(&Photo).Error; err != nil {
+	if err := som.DB.Select("photo_url").Where("user_id = ?", userID).Last(&Photo).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error":   "Data not found",
 			"message": err.Error(),
@@ -108,5 +109,71 @@ func (som *socialMediaRepo) CreateSocialMedias(c *gin.Context) {
 		"name":             Social.Nama,
 		"social_media_url": Social.SocialMediaUrl,
 		"created_at":       Social.CreatedAt,
+	})
+}
+
+func (som *socialMediaRepo) UpdateSocialMedias(c *gin.Context) {
+	userData := c.MustGet("userData").(jwt.MapClaims)
+	contentType := handlers.GetContentType(c)
+
+	Social := models.SocialMedia{}
+	GetSocialBody := models.GetSocialMediaBody{}
+
+	socialMediaId, _ := strconv.Atoi(c.Param("socialMediaId"))
+	userID := uint(userData["id"].(float64))
+
+	if contentType == socialMediatApp {
+		c.ShouldBindJSON(&Social)
+	} else {
+		c.ShouldBind(&Social)
+	}
+
+	Social.UserID = userID
+	Social.ID = uint(socialMediaId)
+
+	if err := som.DB.Model(&Social).Where("id = ?", socialMediaId).Updates(models.SocialMedia{Nama: Social.Nama, SocialMediaUrl: Social.SocialMediaUrl}).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err":     "Bad Request",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	GetSocialBody.ID = Social.ID
+	GetSocialBody.Nama = Social.Nama
+	GetSocialBody.SocialMediaUrl = Social.SocialMediaUrl
+	GetSocialBody.UserID = Social.UserID
+	GetSocialBody.UpdatedAt = Social.UpdatedAt
+
+	c.JSON(http.StatusOK, GetSocialBody)
+}
+
+func (som *socialMediaRepo) DeleteSocialMedias(c *gin.Context) {
+	userData := c.MustGet("userData").(jwt.MapClaims)
+	contentType := handlers.GetContentType(c)
+	Social := models.SocialMedia{}
+
+	socialMediaId, _ := strconv.Atoi(c.Param("socialMediaId"))
+	userID := uint(userData["id"].(float64))
+
+	if contentType == socialMediatApp {
+		c.ShouldBindJSON(&Social)
+	} else {
+		c.ShouldBind(&Social)
+	}
+
+	Social.UserID = userID
+	Social.ID = uint(socialMediaId)
+
+	if err := som.DB.Model(&Social).Where("id = ?", socialMediaId).Delete(&Social).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err":     "Bad Request",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "your social media has been successfully deleted",
 	})
 }

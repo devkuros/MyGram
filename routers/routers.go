@@ -54,6 +54,8 @@ func StartServer() *gin.Engine {
 		socialMediaMiddleware.Use(middlewares.Authentication())
 		socialMediaMiddleware.POST("/", ctrlSocials.CreateSocialMedias)
 		socialMediaMiddleware.GET("/", ctrlSocials.GetSocialMedias)
+		socialMediaMiddleware.PUT("/:socialMediaId", authorizations.SocialMediaAuthorizations(), ctrlSocials.UpdateSocialMedias)
+		socialMediaMiddleware.DELETE("/:socialMediaId", authorizations.SocialMediaAuthorizations(), ctrlSocials.DeleteSocialMedias)
 	}
 
 	return r
